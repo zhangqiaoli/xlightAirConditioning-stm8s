@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=-665604444
+Checksum=1901976412
 [Stack]
 FillEnabled=0
 OverflowWarningsEnabled=1
@@ -19,10 +19,6 @@ LogEnabled=0
 GraphEnabled=0
 ShowTimeLog=1
 ShowTimeSum=1
-[Breakpoints]
-Bp0=_ "STD_CODE" "{$PROJ_DIR$\Project\src\IR.c}.23.3" 1 0 0 0 "" 0 ""
-Bp1=_ "STD_CODE" "{$PROJ_DIR$\Project\src\ProtocolParser.c}.223.9" 1 0 0 0 "" 0 ""
-Count=2
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -30,6 +26,10 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
+[Breakpoints]
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\Project\src\IR.c}.75.7" 1 0 0 0 "" 0 ""
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\Project\src\main.c}.318.3" 1 0 0 0 "" 0 ""
+Count=2
 [Aliases]
 Count=0
 SuppressDialog=0

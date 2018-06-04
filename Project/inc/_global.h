@@ -102,7 +102,7 @@ typedef struct
 
 
 extern Config_t gConfig;
-extern bool gIsChanged;
+extern bool gIsConfigChanged;
 extern bool gNeedSaveBackup;
 extern bool gIsStatusChanged;
 extern bool gResetRF;
