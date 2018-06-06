@@ -47,6 +47,8 @@
 
 #define UNIQUE_ID_LEN           8
 
+#define AIRSTATUSLEN            14
+
 
 // I_GET_NONCE sub-type
 enum {
@@ -83,7 +85,7 @@ typedef struct
   UC swTimes                  :4;           // On/Off times
   UC reserved0                :2;
   US aircondCode              :16;
-  UC aircondStatus[14];
+  UC aircondStatus[AIRSTATUSLEN];
 
   // Configurable parameters
   UC nodeID;                                // Node ID for this device

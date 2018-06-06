@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=1901976412
+Checksum=1427649263
 [Stack]
 FillEnabled=0
 OverflowWarningsEnabled=1
@@ -14,11 +14,23 @@ ByteLimit=50
 ShowArgs=0
 [Disassembly]
 MixedMode=1
+[struct_types]
+Fmt0=MyMsgHeader_t-command_ack_payload	4	0
+Fmt1=MyMsgHeader_t-destination	3	0
+[array_types]
+Fmt0=uint8_t[5]	4	0
+Fmt1=uint8_t[6]	4	0
 [DataSample]
 LogEnabled=0
 GraphEnabled=0
 ShowTimeLog=1
 ShowTimeSum=1
+[Breakpoints]
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\Project\src\main.c}.189.5" 1 0 0 0 "" 0 ""
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\xlightCommon-stm8s\Xlight_lib\rf24l01.c}.232.3" 1 0 0 0 "" 0 ""
+Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\xlightCommon-stm8s\Xlight_lib\rf24l01.c}.239.5" 1 0 0 0 "" 0 ""
+Bp3=_ "STD_CODE" "{$PROJ_DIR$\Project\src\IR.c}.126.12" 1 0 0 0 "" 0 ""
+Count=4
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -26,10 +38,6 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
-[Breakpoints]
-Bp0=_ "STD_CODE" "{$PROJ_DIR$\Project\src\IR.c}.75.7" 1 0 0 0 "" 0 ""
-Bp1=_ "STD_CODE" "{$PROJ_DIR$\Project\src\main.c}.318.3" 1 0 0 0 "" 0 ""
-Count=2
 [Aliases]
 Count=0
 SuppressDialog=0

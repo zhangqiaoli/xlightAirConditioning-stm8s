@@ -548,7 +548,7 @@ int main( void ) {
       //WaitMutex(0xFFFFF);  
       //SendIR(25,1,0,26,0);
       // reset rf
-      CheckACK();
+      SendIR();
       if(delaySendTick == 0 && delaySend)
       {
         Msg_DevStatus(NODEID_GATEWAY);

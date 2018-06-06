@@ -1,5 +1,6 @@
 #include "IR.h"
 #include "Uart2Dev.h"
+#include "timer_2.h"
 #include "_global.h"
 
 #define ARC_CMD          2
@@ -23,22 +24,45 @@ bool IRInit()
   uart2_config(19200);
   memset(uartReceiveDataBuf,0x00,sizeof(uartReceiveDataBuf));
   uartDataPtr = 0;
+  memset(&lastOp,0x00,sizeof(aircondOp_t));
   return TRUE;
 }
-bool SendIR(uint16_t code,uint8_t onoff,uint8_t temp,uint8_t mode,uint8_t fanlevel)
+bool AddIR(uint16_t code,uint8_t *arrAirstatus,uint8_t statusLen)
 {
-  uint8_t data[16];
+    lastOp.code = code;
+    memcpy(lastOp.aircondStatus,arrAirstatus,statusLen);
+    lastOp.status_size = statusLen;
+    return TRUE;
+}
+// 15byte£¬onoff,mode,temp,fanlevel,...
+bool SendIR()
+{
+  if(lastOp.status_size == 0)
+  {
+    return TRUE;
+  }
+  uint8_t data[CMD_LEN];
   memset(data,0x00,sizeof(data));
   uint16_t sum = 0;
-  data[0] = code&(0xFF);
-  data[1] = code>>8;
-  data[2] = mode;  
-  data[3] = temp-17;
-  data[4] = fanlevel; 
-  data[5] = 1;
-  //data[8] = 0x0F;
-  data[12] = 0x20 | onoff;
-  //data[15] = 0x13;
+  data[0] = lastOp.code&(0xFF);
+  data[1] = lastOp.code>>8;
+  if(lastOp.status_size == 4)
+  {
+    data[2] = lastOp.aircondStatus[1];  
+    data[3] = lastOp.aircondStatus[2]-17;
+    data[4] = lastOp.aircondStatus[3]; 
+    data[5] = 1;
+    //data[8] = 0x0F;
+    data[12] = 0x20 | lastOp.aircondStatus[0];
+  }
+  else if(lastOp.status_size>4)
+  {
+    memcpy(&data[2],lastOp.aircondStatus,lastOp.status_size);
+  }
+  else
+  {
+    return FALSE;
+  }
   Uart2SendByte(0x00);
   Delayms(50);
   Uart2SendByte(START_SIG);
@@ -47,7 +71,7 @@ bool SendIR(uint16_t code,uint8_t onoff,uint8_t temp,uint8_t mode,uint8_t fanlev
   sum += ARC_CMD;
   Uart2SendByte(CMD_LEN);
   sum += CMD_LEN;
-  for(uint8_t i=0;i<16;i++)
+  for(uint8_t i=0;i<CMD_LEN;i++)
   {
     sum += data[i];
     Uart2SendByte(data[i]);
@@ -56,32 +80,24 @@ bool SendIR(uint16_t code,uint8_t onoff,uint8_t temp,uint8_t mode,uint8_t fanlev
   checksum = sum%256;
   Uart2SendByte(checksum);
   Uart2SendByte(END_SIG);
-  lastOp.code = code;
-  lastOp.aircondStatus[0] = onoff;
-  lastOp.aircondStatus[1] = temp;
-  lastOp.aircondStatus[2] = mode;
-  lastOp.aircondStatus[3] = fanlevel;
-  needAck = 1;
+  lastOp.status_size = 0;
   return TRUE;
 }
 
 bool CheckACK()
 {
   bool ret = FALSE;
-  if(needAck == 1)
+  if(uartDataPtr>=2 )
   {
-    if(uartDataPtr>=2)
+    if(uartReceiveDataBuf[1] == ARC_SUCCESS)
     {
-      needAck = 0;
-      if(uartReceiveDataBuf[1] == ARC_SUCCESS)
-      {
-        ret = TRUE;
-        gConfig.aircondCode = lastOp.code;
-        memcpy(&gConfig.aircondStatus,&lastOp.aircondStatus,sizeof(gConfig.aircondStatus));
-      }
-      else if(uartReceiveDataBuf[1] == ARC_ERROR)
-      {
-      }
+      ret = TRUE;
+      gConfig.aircondCode = lastOp.code;
+      memcpy(&gConfig.aircondStatus,&lastOp.aircondStatus,sizeof(gConfig.aircondStatus));
+      gIsStatusChanged = TRUE;
+    }
+    else if(uartReceiveDataBuf[1] == ARC_ERROR)
+    {
     }
   }
   return ret;
@@ -102,6 +118,11 @@ INTERRUPT_HANDLER(UART2_RX_IRQHandler, 21)
   */
   u8 data;
   if( UART2_GetITStatus(UART2_IT_RXNE) == SET ) {
+    if(uartDataPtr >= MAX_UART_BUF_SIZE)
+    {
+      uart_step = UART_STEP_WAIT_HEAD;
+      uartDataPtr = 0;
+    }
     data = UART2_ReceiveData8();
     switch( uart_step ) {
     case UART_STEP_WAIT_HEAD:
@@ -118,12 +139,18 @@ INTERRUPT_HANDLER(UART2_RX_IRQHandler, 21)
         uart_step = UART_STEP_WAIT_LEN;
         uartReceiveDataBuf[uartDataPtr++] = data;
       }
+      else
+      {
+        uartDataPtr = 0;
+        uart_step = UART_STEP_WAIT_HEAD;
+      }
       break;
     case UART_STEP_WAIT_LEN:
       if( data > 1 && data < MAX_UART_BUF_SIZE ) {
         uartReceiveDataBuf[uartDataPtr++] = data;
         uart_step = UART_STEP_WAIT_PAYL;
       } else if(data == 0) {
+        uartReceiveDataBuf[uartDataPtr++] = data;
         uart_step = UART_STEP_WAIT_CHECKSUM;
       }else {
         uartDataPtr = 0;
@@ -141,6 +168,8 @@ INTERRUPT_HANDLER(UART2_RX_IRQHandler, 21)
     case UART_STEP_WAIT_END:
       uartReceiveDataBuf[uartDataPtr++] = data;
       uart_step = UART_STEP_WAIT_HEAD;
+      CheckACK();
+      uartDataPtr = 0;
       break;
     default:
       uartDataPtr = 0;

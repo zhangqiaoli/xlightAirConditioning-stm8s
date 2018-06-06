@@ -84,7 +84,7 @@ void build(uint8_t _destination, uint8_t _sensor, uint8_t _command, uint8_t _typ
 }
 
 uint8_t ParseProtocol(){
-  if( rcvMsg.header.destination != gConfig.nodeID && !(rcvMsg.header.destination == BROADCAST_ADDRESS && (rcvMsg.header.sender == NODEID_RF_SCANNER || rcvMsg.header.sender == 64 )) ) return 0;
+ if( rcvMsg.header.destination != gConfig.nodeID && rcvMsg.header.destination != BROADCAST_ADDRESS ) return 0;
   
   uint8_t _cmd = miGetCommand();
   uint8_t _sender = rcvMsg.header.sender;  // The original sender
@@ -215,15 +215,14 @@ uint8_t ParseProtocol(){
       if(_type == V_HVAC_FLOW_STATE)
       {
         uint16_t code = rcvMsg.payload.data[0]<<8 | rcvMsg.payload.data[1];
-        uint8_t onoff = rcvMsg.payload.data[2];
-        uint8_t mode = rcvMsg.payload.data[3];
-        uint8_t temp = rcvMsg.payload.data[4];
-        uint8_t fanlevel = rcvMsg.payload.data[5];
-        SendIR(code,onoff,mode,temp,fanlevel);
+        uint8_t airstatus[AIRSTATUSLEN];
+        memset(airstatus,0x00,sizeof(airstatus));
+        memcpy(airstatus,&rcvMsg.payload.data[2],_lenPayl-2);
+        AddIR(code,airstatus,_lenPayl-2);
         if(_needAck)
         {
           delaySend = TRUE;
-          delaySendTick = 5;
+          delaySendTick = 10;
         }
       }
     }
