@@ -49,7 +49,7 @@ bool SendIR()
   if(lastOp.status_size == 4)
   {
     data[2] = lastOp.aircondStatus[1];  
-    data[3] = lastOp.aircondStatus[2]-17;
+    data[3] = lastOp.aircondStatus[2]-16;
     data[4] = lastOp.aircondStatus[3]; 
     data[5] = 1;
     //data[8] = 0x0F;

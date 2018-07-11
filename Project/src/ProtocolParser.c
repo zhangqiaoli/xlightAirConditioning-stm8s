@@ -70,10 +70,6 @@ bool SendCfgBlock(uint8_t offset,uint8_t size,uint8_t isNeedUniqueid) {
 void build(uint8_t _destination, uint8_t _sensor, uint8_t _command, uint8_t _type, bool _enableAck, bool _isAck)
 {
     sndMsg.header.version_length = PROTOCOL_VERSION;
-    if(gConfig.nodeID != XLA_PRODUCT_NODEID)
-    {
-      gConfig.nodeID = XLA_PRODUCT_NODEID;
-    }
     sndMsg.header.sender = gConfig.nodeID;
     sndMsg.header.destination = _destination;
     sndMsg.header.sensor = _sensor;

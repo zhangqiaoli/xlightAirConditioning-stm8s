@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=1427649263
+Checksum=938352622
 [Stack]
 FillEnabled=0
 OverflowWarningsEnabled=1
@@ -30,7 +30,13 @@ Bp0=_ "STD_CODE" "{$PROJ_DIR$\Project\src\main.c}.189.5" 1 0 0 0 "" 0 ""
 Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\xlightCommon-stm8s\Xlight_lib\rf24l01.c}.232.3" 1 0 0 0 "" 0 ""
 Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\xlightCommon-stm8s\Xlight_lib\rf24l01.c}.239.5" 1 0 0 0 "" 0 ""
 Bp3=_ "STD_CODE" "{$PROJ_DIR$\Project\src\IR.c}.126.12" 1 0 0 0 "" 0 ""
-Count=4
+Bp4=_ "STD_CODE" "{$PROJ_DIR$\Project\src\main.c}.413.5" 1 0 0 0 "" 0 ""
+Bp5=_ "STD_CODE" "{$PROJ_DIR$\Project\src\main.c}.424.9" 1 0 0 0 "" 0 ""
+Bp6=_ "STD_CODE" "{$PROJ_DIR$\Project\src\ProtocolParser.c}.271.3" 1 0 0 0 "" 0 ""
+Bp7=_ "STD_CODE" "{$PROJ_DIR$\Project\src\main.c}.128.3" 1 0 0 0 "" 0 ""
+Bp8=_ "STD_CODE" "{$PROJ_DIR$\Project\src\main.c}.532.9" 1 0 0 0 "" 0 ""
+Bp9=_ "STD_CODE" "{$PROJ_DIR$\Project\src\main.c}.541.5" 1 0 0 0 "" 0 ""
+Count=10
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
